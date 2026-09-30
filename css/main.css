@@ -1801,6 +1801,29 @@ html.st-stack .photo-step-host {
   color: rgba(255, 255, 255, 0.5);
 }
 
+.footer-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.footer-maker {
+  display: inline-flex;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.footer-maker:hover,
+.footer-maker:focus-visible {
+  opacity: 1;
+}
+
+.footer-maker img {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
 /* ---------- reveal-on-scroll ----------
    Hidden states apply only under html.js (set in <head>), so content
    stays visible if scripts are disabled or fail to run. */
