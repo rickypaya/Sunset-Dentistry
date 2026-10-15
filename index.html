@@ -405,48 +405,36 @@
 
       <!-- ===================== LAYER 3: CTA ===================== -->
       <!-- no pin: the last layer; the footer follows it in flow.
-           Its seam overhangs #services. Overflow is clipped on the inner
-           grid, not the section, so the seam isn't cut off; the grid fills
-           the section exactly (no padding), so the watermark is clipped to
-           the same box as before. -->
+           Its leading edge is a valley (.seam-valley) cut through the
+           whole grid, photo and copy alike, and overhangs #services. The
+           grid's clip-path replaces overflow: hidden, so it also clips
+           the watermark. -->
       <div class="layer" data-layer data-pin="none">
         <div class="layer-pin" style="--layer-z: 3">
           <div class="layer-body">
             <section
-              class="bg-navy seam-top seam-notch"
+              class="bg-navy seam-valley"
               id="cta"
-              style="padding-block: 0; --seam-fill: var(--navy-2)"
+              style="padding-block: 0"
             >
-              <div class="split-5-7" style="overflow: hidden">
-                <div
-                  class="photo"
-                  style="min-height: 520px"
-                  data-parallax="0.12"
-                >
+              <div class="split-5-7 valley-body">
+                <div class="photo valley-photo" data-parallax="0.12">
                   <picture>
                     <source
-                      srcset="public/Home/Stock-Best-Smile.webp"
+                      srcset="public/Home/Dentist-Patient-Smiling.webp"
                       type="image/webp"
                     />
                     <img
-                      src="public/Home/Stock-Best-Smile.png"
-                      width="600"
-                      height="600"
-                      alt="Patient with a bright, confident smile after treatment at Sunset Dentistry"
+                      src="public/Home/Dentist-Patient-Smiling.jpg"
+                      width="1200"
+                      height="1721"
+                      alt="Smiling patient in the dental chair admiring his new smile in a hand mirror at Sunset Dentistry"
                       loading="lazy"
                       decoding="async"
                     />
                   </picture>
                 </div>
-                <div
-                  class="relative reveal cta-animate"
-                  style="
-                    padding: var(--sp-6);
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                  "
-                >
+                <div class="relative reveal cta-animate valley-copy">
                   <span
                     class="watermark on-dark"
                     style="

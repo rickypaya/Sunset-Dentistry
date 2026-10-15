@@ -964,10 +964,78 @@ html.st-stack body {
 .seam-peak::before {
   clip-path: polygon(0 100%, var(--seam-at, 62%) 0, 100% 100%);
 }
-/* a notch at 40%: two wedges rising from the notch to the top
-   corners (the gap between them shows the previous section) */
-.seam-notch::before {
-  clip-path: polygon(0 100%, 40% 100%, 100% 0, 100% 100%, 0 100%);
+/* A valley (home CTA). Unlike the ::before seams, the edge is cut
+   into the section's own content: the inner grid (.valley-body) is
+   pulled up by --seam-h to overhang the previous section, which keeps
+   .seam-room, and clipped to a V whose low point sits on --valley-at,
+   the split-5-7 column line. Photo and copy rise into the overhang
+   together, so one continuous edge runs across both columns instead
+   of a navy wedge sitting on a flat-topped photo. A 1.5px sky line
+   (::after) traces the edge --valley-line below it: a horizon across
+   the photo and the navy panel.
+   - The grid's clip-path also stands in for overflow: hidden (it
+     clips the watermark to the same box).
+   - flow-root on the section keeps the grid's negative margin from
+     collapsing through it, which would move the whole section up.
+   - The copy column paints its own navy: the overhang lies outside
+     the section's box, where its background doesn't reach.
+   Y coordinates are multiples of --seam-h, not percentages, so the
+   edge keeps its height whatever the grid's height. */
+.seam-valley {
+  --valley-at: 41.6667%; /* 5fr of 5fr 7fr */
+  --valley-line: calc(var(--seam-h) * 0.14);
+  position: relative;
+  display: flow-root;
+}
+.valley-body {
+  position: relative;
+  margin-top: calc(-1 * var(--seam-h));
+  clip-path: polygon(
+    0 0,
+    var(--valley-at) var(--seam-h),
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+}
+.valley-body::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(var(--seam-h) + var(--valley-line) + 1px);
+  background: var(--sky);
+  opacity: 0.85;
+  pointer-events: none;
+  clip-path: polygon(
+    0 calc(var(--valley-line) - 0.75px),
+    var(--valley-at) calc(var(--seam-h) + var(--valley-line) - 0.75px),
+    100% calc(var(--valley-line) - 0.75px),
+    100% calc(var(--valley-line) + 0.75px),
+    var(--valley-at) calc(var(--seam-h) + var(--valley-line) + 0.75px),
+    0 calc(var(--valley-line) + 0.75px)
+  );
+}
+.valley-photo {
+  min-height: calc(520px + var(--seam-h));
+}
+.valley-copy {
+  background: var(--navy-2);
+  padding: calc(var(--sp-6) + var(--seam-h) * 0.6) var(--sp-6) var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* stacked: the photo spans the width, so the valley centres on it */
+@media (max-width: 900px) {
+  .seam-valley {
+    --valley-at: 50%;
+  }
+  .valley-copy {
+    padding-top: var(--sp-6);
+  }
 }
 /* Stepped seams: a low run, a diagonal step, a high run. A thin accent
    line (::after) runs parallel to the edge, a quarter of the seam height
