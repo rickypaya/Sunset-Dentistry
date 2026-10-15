@@ -1426,6 +1426,76 @@ html.st-stack .photo-step-host {
   }
 }
 
+/* ---------- services: hero tooth illustration ----------
+   Desktop: fills the right column and bleeds off the right edge (the
+   hero clips it). Mobile: the grid stacks, so the art flows below the
+   copy at a capped size instead of overflowing up into the button. */
+.services-hero-art {
+  height: 100%;
+  min-height: 340px;
+}
+.services-hero-art svg {
+  position: absolute;
+  right: -15%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 130%;
+  max-width: 520px;
+  stroke: var(--sky-deep);
+  fill: none;
+  stroke-width: 1.2;
+  opacity: 0.9;
+}
+@media (max-width: 900px) {
+  .services-hero-art {
+    height: auto;
+    min-height: 0;
+  }
+  .services-hero-art svg {
+    position: static;
+    display: block;
+    transform: none;
+    width: min(60%, 320px);
+    margin: var(--sp-4) -8% 0 auto;
+  }
+}
+@media (max-width: 560px) {
+  .services-hero-art svg {
+    width: min(55%, 220px);
+    stroke-width: 1.5;
+  }
+}
+
+/* ---------- services: cosmetic / restorative photos ----------
+   Desktop: tall images (120vh) that the clipping .photo crops and the
+   parallax drifts. Mobile: the grid stacks and nothing caps the
+   container, so a 120vh image would make the photo taller than the
+   screen; it becomes a fixed-ratio frame instead. */
+.svc-photo img {
+  height: 120vh;
+}
+.svc-photo-cosmetic {
+  min-height: 300px;
+}
+.svc-photo-restorative {
+  min-height: 460px;
+}
+@media (max-width: 900px) {
+  .svc-photo {
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+    max-height: 60vh;
+  }
+  .svc-photo img {
+    height: 100%;
+  }
+}
+@media (max-width: 560px) {
+  .svc-photo {
+    aspect-ratio: 5 / 4;
+  }
+}
+
 /* ---------- schedule: hero ----------
    Centred call to action on a paper-to-pale-sky wash. The inner block's
    generous bottom padding already clears the contact seam's overhang,
