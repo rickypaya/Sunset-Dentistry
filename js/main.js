@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Enhanced path: GSAP + ScrollTrigger loaded (Lenis optional).
   // Fallback path: a library is missing, so the CSS sticky stack
   // stays in charge and IntersectionObserver / a scroll listener
-  // drive reveals, the side nav, the header and the progress bar.
+  // drive reveals, the side nav and the header.
   // The helpers below are shared by both paths.
   const root = document.documentElement;
   // Must match the CSS pinning media query (see "layered stack").
@@ -41,17 +41,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
   const pinMq = window.matchMedia(PIN_QUERY);
   const header = document.getElementById("siteHeader");
-  const progressBar = document.getElementById("progressBar");
   const sideButtons = Array.from(
     document.querySelectorAll(".side-nav button"),
   );
-  const navTargets = sideButtons
-    .map((b) => document.getElementById(b.dataset.target))
-    .filter(Boolean);
+  const navButtons = sideButtons.filter((b) =>
+    document.getElementById(b.dataset.target),
+  );
+  const navTargets = navButtons.map((b) =>
+    document.getElementById(b.dataset.target),
+  );
+  // data-through="<id>" lets one dot span several sections: its range
+  // runs from its target's top to the bottom of that later element.
+  const navEnds = navButtons.map(
+    (b, i) =>
+      (b.dataset.through && document.getElementById(b.dataset.through)) ||
+      navTargets[i],
+  );
   const revealEls = document.querySelectorAll(".reveal, .reveal-stagger");
   const layers = Array.from(document.querySelectorAll("[data-layer]"));
   const hasGsap = !!(window.gsap && window.ScrollTrigger);
   let lenis = null; // set while Lenis is running
+  // Section snap state (see snapWheel)
+  const SNAP_GAP = 200; // ms without wheel events that ends a gesture
+  const SNAP_MAX_HOLD = 1500; // ms: never hold one gesture longer
+  let stackTriggers = []; // pin triggers, in document order
+  let snapHold = null; // { dir, since, last } while held at a stop
 
   const viewportH = () => root.clientHeight;
 
@@ -246,10 +260,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // or scrubbed layers would jump.
     gsap.ticker.lagSmoothing(0);
 
-    // Header state + progress bar, from one trigger spanning the
-    // whole page. The bar only ever changes transform.
+    // Header state, from one trigger spanning the whole page.
     const paintChrome = (self) => {
-      progressBar.style.transform = `scaleX(${self.progress})`;
       header.classList.toggle("is-scrolled", self.scroll() > 40);
     };
     ScrollTrigger.create({
@@ -268,6 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // trigger:), so depth transforms can't skew them. The last target
     // is stretched to the end of the page so it still activates if it
     // never reaches the line (a footer shorter than the viewport).
+    // A data-through dot ends at the bottom of its through element.
     const navLine = NAV_OFFSET + 8;
     const lastIdx = navTargets.length - 1;
     // Filled in as they're created: onRefresh fires during create().
@@ -284,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
           end: () =>
             i === lastIdx
               ? ScrollTrigger.maxScroll(window) + 1
-              : flowTop(el) + el.offsetHeight - navLine,
+              : flowTop(navEnds[i]) + navEnds[i].offsetHeight - navLine,
           onToggle: syncNav,
           onRefresh: syncNav,
         }),
@@ -317,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //   reduced = motion OK but not full (tablet/mobile, short or
     //             ultra-wide windows): Lenis only, no pins or depth
     //   off     = prefers-reduced-motion: plain native scrolling
-    // Progress, header, side nav and reveals (above) run in all
+    // Header, side nav and reveals (above) run in all
     // three; under reduced motion CSS shows reveals immediately.
     // Inner photo parallax is an extra on top of "full", only for a
     // mouse/trackpad (not touch-first devices, even at desktop size).
@@ -397,13 +410,75 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Section snap: before a layer starts to be covered, wheel scrolling
+  // stops at that layer's pin start (its bottom edge on the viewport
+  // bottom, or its top on the viewport top for one that fits) and holds
+  // there until the gesture ends, trackpad inertia included. The next
+  // gesture carries on into the layered effect. Works both ways, so
+  // scrolling back up also stops with the layer fully uncovered.
+  // Lenis wheel input only, and only while the stack is built
+  // (stackTriggers is empty otherwise). Keyboard, scrollbar, touch and
+  // programmatic scrolls (side nav, anchors) pass straight through.
+  function snapWheel({ deltaY, event }) {
+    if (
+      !lenis ||
+      !stackTriggers.length ||
+      !event.type.includes("wheel") ||
+      event.ctrlKey || // pinch zoom
+      !deltaY ||
+      event.target.closest?.(
+        "[data-lenis-prevent], [data-lenis-prevent-wheel], [data-lenis-prevent-vertical]",
+      )
+    )
+      return true;
+    const now = performance.now();
+    const dir = Math.sign(deltaY);
+    const swallow = () => {
+      if (event.cancelable) event.preventDefault();
+      return false;
+    };
+
+    if (snapHold) {
+      const ended =
+        dir !== snapHold.dir ||
+        now - snapHold.last > SNAP_GAP ||
+        now - snapHold.since > SNAP_MAX_HOLD;
+      if (!ended) {
+        snapHold.last = now;
+        return swallow();
+      }
+      snapHold = null;
+    }
+
+    // Would this step cross a pin start? Nearest one in the direction
+    // of travel wins. ScrollTrigger keeps st.start current on refresh.
+    const from = lenis.targetScroll;
+    const to = from + deltaY;
+    const max = ScrollTrigger.maxScroll(window);
+    let stop = null;
+    for (const st of stackTriggers) {
+      const s = st.start;
+      if (s <= 1 || s >= max - 1) continue; // page top/end: nothing to stop
+      if (dir > 0 && from < s - 1 && to >= s - 1) {
+        stop = s;
+        break;
+      }
+      if (dir < 0 && from > s + 1 && to <= s + 1) stop = s;
+    }
+    if (stop === null) return true;
+
+    lenis.scrollTo(stop, { programmatic: false, lerp: lenis.options.lerp });
+    snapHold = { dir, since: now, last: now };
+    return swallow();
+  }
+
   // Lenis smooths wheel/trackpad input only. Touch stays native
   // (syncTouch left at its default, false). Standard ScrollTrigger
   // sync: Lenis reports every scroll to ScrollTrigger, and GSAP's
   // ticker drives Lenis's raf, so both update in the same frame.
   function startLenis() {
     if (!window.Lenis) return null; // Lenis failed to load: native scroll
-    lenis = new Lenis({ autoRaf: false });
+    lenis = new Lenis({ autoRaf: false, virtualScroll: snapWheel });
     lenis.on("scroll", ScrollTrigger.update);
     const raf = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
@@ -493,6 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
           },
         },
       });
+      stackTriggers.push(tl.scrollTrigger);
 
       if (overlay) {
         // Depth response of the covered layer: shrink to 0.95,
@@ -513,6 +589,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     return () => {
+      stackTriggers = [];
+      snapHold = null;
       shades.forEach((s) => s.remove());
       layers.forEach((l) => {
         const b = l.querySelector(".layer-body");
@@ -569,6 +647,51 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       );
     });
+
+    // Decoration planes ([data-drift]) around a framed photo: each
+    // moves strength x frame height over the same flow-based range,
+    // centred on its resting offset (negative runs the other way).
+    // Unlike the picture nothing clips them; the frame's margin and
+    // the small strengths keep them close to the photo.
+    document.querySelectorAll("[data-drift]").forEach((deco) => {
+      const frame = deco.parentElement;
+      const strength = parseFloat(deco.dataset.drift);
+      if (!frame || !strength) return;
+      const half = () => (strength / 2) * frame.offsetHeight;
+      gsap.fromTo(
+        deco,
+        { y: () => -half() },
+        {
+          y: () => half(),
+          ease: "none",
+          scrollTrigger: {
+            start: () => flowTop(frame) - viewportH(),
+            end: () => flowTop(frame) + frame.offsetHeight,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+    });
+
+    // Service photos warm from greyscale into colour as they rise to
+    // the middle of the screen (the CSS reads --svc-color).
+    document.querySelectorAll(".svc-photo").forEach((photo) => {
+      gsap.fromTo(
+        photo,
+        { "--svc-color": 0 },
+        {
+          "--svc-color": 1,
+          ease: "none",
+          scrollTrigger: {
+            start: () => flowTop(photo) - viewportH(),
+            end: () => flowTop(photo) - viewportH() * 0.35,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+    });
   }
 
   // ---------- fallback: libraries unavailable ----------
@@ -591,21 +714,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveNav(entry.target.id);
+          if (entry.isIntersecting) setActiveNav(navIdFor.get(entry.target));
         });
       },
       { threshold: 0.5 },
     );
-    navTargets.forEach((s) => sectionObserver.observe(s));
+    // a data-through element lights its spanning dot
+    const navIdFor = new Map();
+    navTargets.forEach((s, i) => {
+      navIdFor.set(s, s.id);
+      navIdFor.set(navEnds[i], s.id);
+    });
+    navIdFor.forEach((_, el) => sectionObserver.observe(el));
 
-    // Header scroll state + progress bar (rAF-throttled)
+    // Header scroll state (rAF-throttled)
     let ticking = false;
     function onScroll() {
-      const scrollY = window.scrollY;
-      header.classList.toggle("is-scrolled", scrollY > 40);
-      const docHeight = root.scrollHeight - window.innerHeight;
-      const p = docHeight > 0 ? scrollY / docHeight : 0;
-      progressBar.style.transform = `scaleX(${p})`;
+      header.classList.toggle("is-scrolled", window.scrollY > 40);
       ticking = false;
     }
     window.addEventListener("scroll", () => {
@@ -657,8 +782,24 @@ document.addEventListener("DOMContentLoaded", () => {
         card.style.display =
           filter === "all" || card.dataset.role === filter ? "" : "none";
       });
+      keepLayerUncovered(chip);
     });
   });
+  // Filtering shrinks the team's layer, but the scroll position stays
+  // put, so it can land past the point where the layer pins and the
+  // next layer (FAQ) slides over the grid. Re-measure pins now (not
+  // after the debounced ResizeObserver refresh), then pull back to
+  // the layer's pin start if we're beyond it.
+  function keepLayerUncovered(el) {
+    const layer = el.closest("[data-layer]");
+    if (!layer) return;
+    if (hasGsap) ScrollTrigger.refresh();
+    const pin = layer.querySelector(".layer-pin");
+    const layerTop = layer.getBoundingClientRect().top + window.scrollY;
+    const pinStart =
+      layerTop + Math.max(0, pin.offsetHeight - viewportH());
+    if (window.scrollY > pinStart) scrollToY(pinStart, { immediate: true });
+  }
 
   // Appointment time-slot picker (schedule page)
   document.querySelectorAll(".time-opt").forEach((opt) => {

@@ -52,9 +52,9 @@
       href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
     />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" type="image/svg+xml" href="public/brand/Icon.svg" />
   </head>
   <body>
-    <div class="progress-bar" id="progressBar"></div>
 
     <nav class="side-nav" id="sideNav">
       <button
@@ -62,10 +62,12 @@
         data-label="Financing"
         class="is-active"
       ></button>
-      <button data-target="stats" data-label="Terms"></button>
-      <button data-target="features" data-label="Features"></button>
+      <button
+        data-target="stats"
+        data-through="features"
+        data-label="Terms"
+      ></button>
       <button data-target="apply" data-label="Apply"></button>
-      <button data-target="footer" data-label="Contact"></button>
     </nav>
 
     <header class="site-header" id="siteHeader">

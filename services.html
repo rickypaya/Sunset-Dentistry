@@ -52,9 +52,9 @@
       href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
     />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" type="image/svg+xml" href="public/brand/Icon.svg" />
   </head>
   <body>
-    <div class="progress-bar" id="progressBar"></div>
 
     <nav class="side-nav" id="sideNav">
       <button
@@ -66,7 +66,6 @@
       <button data-target="restorative" data-label="Restorative"></button>
       <button data-target="protective" data-label="Protective"></button>
       <button data-target="testimonials" data-label="Reviews"></button>
-      <button data-target="footer" data-label="Contact"></button>
     </nav>
 
     <header class="site-header" id="siteHeader">
@@ -238,17 +237,69 @@
                   </div>
                 </div>
                 <!-- data-parallax: the <picture> drifts inside the clipping
-               .photo; hover effects stay on the img (see CSS) -->
-                <div
-                  class="photo reveal svc-photo svc-photo-cosmetic"
-                  data-parallax="0.2"
-                >
-                  <picture>
-                    <img
-                      src="public/Services/cosmetic-service.jpg"
-                      alt="Patient receiving a cosmetic whitening treatment"
-                    />
-                  </picture>
+               .photo; hover effects stay on the img (see CSS).
+               data-drift: decoration planes behind/over the photo
+               that move at their own speed, for layered depth. -->
+                <div class="svc-frame svc-frame-cosmetic reveal">
+                  <span
+                    class="svc-deco svc-deco-block"
+                    data-drift="-0.06"
+                    aria-hidden="true"
+                  ></span>
+                  <span
+                    class="svc-deco svc-deco-brackets"
+                    data-drift="0.08"
+                    aria-hidden="true"
+                  ></span>
+                  <div
+                    class="photo svc-photo svc-photo-cosmetic"
+                    data-parallax="0.2"
+                  >
+                    <!-- sizes: on desktop the img is 120vh tall (cover,
+                         0.77 ratio) under a 1.2x parallax zoom, so it
+                         needs ~111vh of width; stacked, it's full width -->
+                    <picture>
+                      <source
+                        type="image/avif"
+                        srcset="
+                          public/Services/cosmetic-service-800.avif   800w,
+                          public/Services/cosmetic-service-1200.avif 1200w,
+                          public/Services/cosmetic-service-1600.avif 1600w,
+                          public/Services/cosmetic-service-2000.avif 2000w
+                        "
+                        sizes="(max-width: 900px) 100vw, 111vh"
+                      />
+                      <source
+                        type="image/webp"
+                        srcset="
+                          public/Services/cosmetic-service-800.webp   800w,
+                          public/Services/cosmetic-service-1200.webp 1200w,
+                          public/Services/cosmetic-service-1600.webp 1600w,
+                          public/Services/cosmetic-service-2000.webp 2000w
+                        "
+                        sizes="(max-width: 900px) 100vw, 111vh"
+                      />
+                      <img
+                        src="public/Services/cosmetic-service-1200.jpg"
+                        srcset="
+                          public/Services/cosmetic-service-800.jpg   800w,
+                          public/Services/cosmetic-service-1200.jpg 1200w,
+                          public/Services/cosmetic-service-1600.jpg 1600w,
+                          public/Services/cosmetic-service-2000.jpg 2000w
+                        "
+                        sizes="(max-width: 900px) 100vw, 111vh"
+                        width="1600"
+                        height="2080"
+                        decoding="async"
+                        alt="Patient receiving a cosmetic whitening treatment"
+                      />
+                    </picture>
+                  </div>
+                  <span
+                    class="svc-deco svc-deco-tab"
+                    data-drift="0.16"
+                    aria-hidden="true"
+                  ></span>
                 </div>
               </div>
             </section>
@@ -272,16 +323,35 @@
                 style="gap: var(--sp-6); align-items: center"
               >
                 <div
-                  class="photo reveal svc-photo svc-photo-restorative"
+                  class="svc-frame svc-frame-restorative reveal"
                   style="order: 1"
-                  data-parallax="0.12"
                 >
-                  <picture>
-                    <img
-                      src="public/Services/Restorative-services.jpeg"
-                      alt="Restorative dental procedure in progress"
-                    />
-                  </picture>
+                  <span
+                    class="svc-deco svc-deco-block"
+                    data-drift="-0.06"
+                    aria-hidden="true"
+                  ></span>
+                  <span
+                    class="svc-deco svc-deco-brackets"
+                    data-drift="0.08"
+                    aria-hidden="true"
+                  ></span>
+                  <div
+                    class="photo svc-photo svc-photo-restorative"
+                    data-parallax="0.12"
+                  >
+                    <picture>
+                      <img
+                        src="public/Services/Restorative-services.jpeg"
+                        alt="Restorative dental procedure in progress"
+                      />
+                    </picture>
+                  </div>
+                  <span
+                    class="svc-deco svc-deco-tab"
+                    data-drift="0.16"
+                    aria-hidden="true"
+                  ></span>
                 </div>
                 <div style="order: 2" class="reveal">
                   <h2 class="display-2" style="color: var(--paper)">
@@ -391,18 +461,45 @@
                 class="photo photo-step reveal"
                 style="margin-bottom: var(--sp-6)"
               >
-                <img
-                  src="public/Services/Protective-services.png"
-                  style="
-                    width: 100%;
-                    height: auto;
-                    object-fit: contain;
-                    transform: none;
-                  "
-                  width="3770"
-                  height="2121"
-                  alt="Dentist fitting a custom mouthguard"
-                />
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcset="
+                      public/Services/protective-services-1280.avif 1280w,
+                      public/Services/protective-services-1920.avif 1920w,
+                      public/Services/protective-services-2560.avif 2560w
+                    "
+                    sizes="100vw"
+                  />
+                  <source
+                    type="image/webp"
+                    srcset="
+                      public/Services/protective-services-1280.webp 1280w,
+                      public/Services/protective-services-1920.webp 1920w,
+                      public/Services/protective-services-2560.webp 2560w
+                    "
+                    sizes="100vw"
+                  />
+                  <img
+                    src="public/Services/protective-services-1920.jpg"
+                    srcset="
+                      public/Services/protective-services-1280.jpg 1280w,
+                      public/Services/protective-services-1920.jpg 1920w,
+                      public/Services/protective-services-2560.jpg 2560w
+                    "
+                    sizes="100vw"
+                    style="
+                      width: 100%;
+                      height: auto;
+                      object-fit: contain;
+                      transform: none;
+                    "
+                    width="2560"
+                    height="914"
+                    decoding="async"
+                    alt="Patient holding a clear custom night guard"
+                  />
+                </picture>
               </div>
               <div class="container split-5-7" style="gap: var(--sp-6)">
                 <div class="reveal">

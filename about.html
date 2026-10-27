@@ -52,9 +52,9 @@
       href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
     />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" type="image/svg+xml" href="public/brand/Icon.svg" />
   </head>
   <body>
-    <div class="progress-bar" id="progressBar"></div>
 
     <nav class="side-nav" id="sideNav">
       <button data-target="hero" data-label="Story" class="is-active"></button>
@@ -62,7 +62,6 @@
       <button data-target="leadership" data-label="Leadership"></button>
       <button data-target="team" data-label="Team"></button>
       <button data-target="faq" data-label="FAQ"></button>
-      <button data-target="footer" data-label="Contact"></button>
     </nav>
 
     <header class="site-header" id="siteHeader">
@@ -246,12 +245,12 @@
                     <div class="dr-header">
                       <div class="photo dr-photo">
                         <img
-                          src="public/Headshots/Dentists/DrLeyteVidal.png"
+                          src="public/Headshots/Dentists/Dr.LeyteVidal.jpg"
                           alt="Portrait of Dr. Marco Leyte-Vidal at Sunset Dentistry"
                         />
                       </div>
-                      <h3 style="font-size: 1.5rem; padding: 0; border: 0">
-                        Dr. Marco Leyte-Vidal, DMD
+                      <h3 class="dr-name">
+                        Dr. Marco Leyte-Vidal<span class="dr-cred">DMD</span>
                       </h3>
                     </div>
                     <div class="dr-bio">
@@ -286,12 +285,12 @@
                     <div class="dr-header">
                       <div class="photo dr-photo">
                         <img
-                          src="public/Headshots/Dentists/cosmetic-service.png"
+                          src="public/Headshots/Dentists/Dr.Robinson.jpg"
                           alt="Portrait of Dr. Michael Robinson at Sunset Dentistry"
                         />
                       </div>
-                      <h3 style="font-size: 1.5rem; padding: 0; border: 0">
-                        Dr. Michael Robinson, DMD
+                      <h3 class="dr-name">
+                        Dr. Michael Robinson<span class="dr-cred">DMD</span>
                       </h3>
                     </div>
                     <div class="dr-bio">
@@ -316,8 +315,15 @@
                     </div>
                   </div>
                   <div class="assoc">
-                    <div class="photo dr-photo placeholder">SR</div>
-                    <h3 style="font-size: 1.5rem">Dr. Shelley Robinson, DMD</h3>
+                    <div class="photo dr-photo">
+                      <img
+                        src="public/Headshots/Dentists/Dr.ShelleyRobinson.JPEG"
+                        alt="Portrait of Dr. Shelley Robinson at Sunset Dentistry"
+                      />
+                    </div>
+                    <h3 class="dr-name">
+                      Dr. Shelley Robinson<span class="dr-cred">DMD</span>
+                    </h3>
                     <div class="dr-divider" aria-hidden="true"></div>
                     <div class="dr-bio">
                       <p class="dr-lead">
@@ -379,79 +385,156 @@
 
                 <div class="team-grid reveal-stagger">
                   <div class="team-mini" data-role="front-desk">
-                    <div>
-                      <div class="avatar-block">V</div>
-                      <h5>Veronica</h5>
-                      <p class="role">Office Manager</p>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Vero.JPEG"
+                        alt="Portrait of Veronica at Sunset Dentistry"
+                        loading="lazy"
+                      />
                     </div>
+                    <h5>Veronica</h5>
+                    <p class="role">Office Manager</p>
                   </div>
                   <div class="team-mini" data-role="hygienist">
-                    <div class="avatar-block">M</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Maria.JPEG"
+                        alt="Portrait of Maria at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Maria</h5>
                     <p class="role">Dental Hygienist</p>
                   </div>
                   <div class="team-mini" data-role="front-desk">
-                    <div class="avatar-block">E</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Elsa.JPEG"
+                        alt="Portrait of Elsa at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Elsa</h5>
                     <p class="role">Insurance Coordinator</p>
                   </div>
                   <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">S</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Silvia.JPEG"
+                        alt="Portrait of Silvia at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Silvia</h5>
                     <p class="role">Dental Assistant</p>
                   </div>
                   <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">J</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Julie.JPEG"
+                        alt="Portrait of Julie at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Julie</h5>
                     <p class="role">Dental Assistant</p>
                   </div>
                   <div class="team-mini" data-role="hygienist">
-                    <div class="avatar-block">D</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Debra.JPEG"
+                        alt="Portrait of Debra at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Debra</h5>
                     <p class="role">Dental Hygienist</p>
                   </div>
                   <div class="team-mini" data-role="front-desk">
-                    <div class="avatar-block">J</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Joyce.JPEG"
+                        alt="Portrait of Joyce at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Joyce</h5>
                     <p class="role">Recare Coordinator</p>
                   </div>
                   <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">Z</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Zakieh.JPEG"
+                        alt="Portrait of Zakieh at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Zakieh</h5>
                     <p class="role">Dental Assistant</p>
                   </div>
                   <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">D</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Daylet.JPEG"
+                        alt="Portrait of Daylet at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Daylet</h5>
                     <p class="role">Dental Assistant</p>
                   </div>
                   <div class="team-mini" data-role="hygienist">
-                    <div class="avatar-block">D</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Deanne.JPEG"
+                        alt="Portrait of Deanne at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Deanne</h5>
                     <p class="role">Dental Hygienist</p>
                   </div>
                   <div class="team-mini" data-role="hygienist">
-                    <div class="avatar-block">D</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Desiree.JPEG"
+                        alt="Portrait of Desiree at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Desiree</h5>
                     <p class="role">Dental Hygienist</p>
                   </div>
                   <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">R</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Rachel.JPEG"
+                        alt="Portrait of Rachel at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Rachel</h5>
                     <p class="role">Dental Assistant</p>
                   </div>
-                  <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">D</div>
-                    <h5>Daniela</h5>
-                    <p class="role">Dental Assistant</p>
-                  </div>
                   <div class="team-mini" data-role="hygienist">
-                    <div class="avatar-block">L</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Lynette.JPEG"
+                        alt="Portrait of Lynette at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Lynette</h5>
                     <p class="role">Dental Hygienist</p>
                   </div>
                   <div class="team-mini" data-role="assistant">
-                    <div class="avatar-block">S</div>
+                    <div class="avatar-block">
+                      <img
+                        src="public/Staff%20Photos/Stephanie.JPEG"
+                        alt="Portrait of Stephanie at Sunset Dentistry"
+                        loading="lazy"
+                      />
+                    </div>
                     <h5>Stephanie</h5>
                     <p class="role">Dental Assistant</p>
                   </div>

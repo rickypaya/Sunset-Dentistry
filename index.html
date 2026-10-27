@@ -110,14 +110,15 @@
     <link rel="icon" type="image/svg+xml" href="public/brand/Icon.svg" />
   </head>
   <body>
-    <div class="progress-bar" id="progressBar"></div>
 
     <nav class="side-nav" id="sideNav">
       <button data-target="hero" data-label="Home" class="is-active"></button>
-      <button data-target="credentials" data-label="Credentials"></button>
-      <button data-target="services" data-label="Services"></button>
+      <button
+        data-target="credentials"
+        data-through="services"
+        data-label="Services"
+      ></button>
       <button data-target="cta" data-label="Book"></button>
-      <button data-target="footer" data-label="Contact"></button>
     </nav>
 
     <header class="site-header intro-nav" id="siteHeader">

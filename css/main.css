@@ -3,9 +3,9 @@
    Fonts are loaded by <link> tags in each page's <head> (preconnected,
    so they start downloading sooner than an @import here would).
 
-   Sections, in order: tokens and base, chrome (progress bar, side nav,
-   header), components, layout, hero, the layered stack, seams,
-   page-specific components, reveals, utilities.
+   Sections, in order: tokens and base, chrome (side nav, header),
+   components, layout, hero, the layered stack, seams, page-specific
+   components, reveals, utilities.
    ===================================================================== */
 
 :root {
@@ -131,20 +131,6 @@ h4 {
   max-width: var(--container);
   margin-inline: auto;
   padding-inline: var(--edge);
-}
-
-/* ---------- scroll progress bar ---------- */
-.progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  /* full width, scaled on X: scroll updates only touch transform */
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  z-index: 999;
-  background: linear-gradient(90deg, var(--sky), var(--navy));
 }
 
 /* ---------- side scroll-guide dots ---------- */
@@ -820,8 +806,8 @@ section {
    Z-index: every P is positioned with an ascending --layer-z. Seams
    (::before on the incoming section) paint inside their layer, so
    each seam automatically sits above the layer it overhangs. The
-   fixed header (80), side nav (60) and progress bar (999) stay above
-   every layer.
+   fixed header (80), and side nav (60) stay above every
+   layer.
 
    When pinning is on: wider than 900px, at least 600px tall, aspect
    ratio no wider than 12/5, and motion allowed. The height and
@@ -1548,7 +1534,118 @@ html.st-stack .photo-step-host {
 .svc-photo-restorative {
   min-height: 460px;
 }
+
+/* .svc-frame: the photo plus the about page's decoration language
+   (offset block, corner brackets, sky bar, hanging tab), rebuilt for
+   the dark sections. Each .svc-deco is its own plane with a
+   data-drift speed, so while the picture drifts inside the photo
+   (data-parallax) the block slides the other way and the brackets and
+   tab outrun it: three depths moving past each other. Without active
+   parallax the planes sit still at their resting offsets. The margin
+   is the room the offsets spill into. --svc-off sets every offset. */
+.svc-frame {
+  --svc-off: 22px;
+  position: relative;
+  isolation: isolate;
+  margin: calc(var(--svc-off) + 6px);
+}
+.svc-deco {
+  position: absolute;
+  pointer-events: none;
+}
+/* offset block, behind the photo */
+.svc-deco-block {
+  z-index: -1;
+  inset: var(--svc-off) calc(var(--svc-off) * -1) calc(var(--svc-off) * -1)
+    var(--svc-off);
+  background: var(--navy-2);
+}
+/* corner brackets, just outside the photo edge */
+.svc-deco-brackets {
+  z-index: 1;
+  inset: calc(var(--svc-off) * -0.6);
+}
+.svc-deco-brackets::before,
+.svc-deco-brackets::after {
+  content: "";
+  position: absolute;
+  width: 26%;
+  height: 16%;
+  border: 0 solid var(--sky-pale);
+}
+.svc-deco-brackets::before {
+  top: 0;
+  left: 0;
+  border-top-width: 3px;
+  border-left-width: 3px;
+}
+.svc-deco-brackets::after {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 3px;
+  border-right-width: 3px;
+}
+/* hanging tab, a sky rule on the outer side edge */
+.svc-deco-tab {
+  z-index: 1;
+  top: 18%;
+  right: calc(var(--svc-off) * -1.6);
+  width: 3px;
+  height: 22%;
+  background: var(--sky-pale);
+}
+/* sky bar along the photo's base, and a navy wash that sinks the
+   photo's lower edge into the section */
+.svc-photo::before,
+.svc-photo::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+.svc-photo::before {
+  height: 35%;
+  background: linear-gradient(to top, rgba(0, 26, 48, 0.45), transparent);
+}
+.svc-photo::after {
+  height: 4px;
+  background: var(--sky);
+}
+/* restorative mirrors cosmetic: it sits on the left on navy, so the
+   block goes up-left in sky-deep, and the tab moves to the left edge */
+.svc-frame-restorative .svc-deco-block {
+  inset: calc(var(--svc-off) * -1) var(--svc-off) var(--svc-off)
+    calc(var(--svc-off) * -1);
+  background: var(--sky-deep);
+}
+.svc-frame-restorative .svc-deco-brackets::before,
+.svc-frame-restorative .svc-deco-brackets::after {
+  border-color: var(--sky);
+}
+.svc-frame-restorative .svc-deco-tab {
+  top: auto;
+  bottom: 18%;
+  right: auto;
+  left: calc(var(--svc-off) * -1.6);
+  background: var(--sky);
+}
+/* scroll colour: while parallax runs, the script scrubs --svc-color
+   from 0 to 1 as the photo nears the middle of the screen, so the
+   greyscale photo warms into colour. Hover still shows full colour.
+   Unset (no parallax) it stays the site's default greyscale. */
+.svc-photo img {
+  filter: grayscale(calc(1 - var(--svc-color, 0))) contrast(1.02);
+}
+.svc-photo:hover img {
+  filter: grayscale(0);
+}
 @media (max-width: 900px) {
+  .svc-frame {
+    --svc-off: 12px;
+  }
   .svc-photo {
     min-height: 0;
     aspect-ratio: 4 / 3;
@@ -1648,26 +1745,29 @@ html.st-stack .photo-step-host {
 .team-lead .photo {
   aspect-ratio: 4/3.2;
 }
-/* dentist header: a compact portrait beside the name, so a tall
-   headshot never dictates the card's height */
+/* dentist header: a prominent portrait paired with the name and
+   credential, so the face and title read together */
 .dr-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--sp-3);
   width: 100%;
-  padding-bottom: var(--sp-2);
+  padding-bottom: var(--sp-3);
   border-bottom: 1px solid var(--line);
   margin-bottom: var(--sp-1);
 }
 .dr-photo {
   flex: none;
-  width: 128px;
-  height: 148px;
+  width: 180px;
+  height: 225px;
   border-radius: 0;
+  margin: 0 10px 10px 0;
+  box-shadow: 10px 10px 0 var(--sky-pale);
 }
 .dr-photo img {
   filter: none;
   transform: none;
+  object-position: center top;
 }
 .dr-photo.placeholder {
   display: flex;
@@ -1680,10 +1780,42 @@ html.st-stack .photo-step-host {
   font-size: 2rem;
   color: var(--paper);
 }
-.dr-header h3 {
+.dr-name {
   flex: 1;
   min-width: 0;
-  line-height: 1.25;
+  margin: 0;
+  padding: 0 0 10px;
+  border: 0;
+  font-size: clamp(1.45rem, 2.2vw, 1.9rem);
+  line-height: 1.15;
+  color: var(--navy-2);
+}
+.dr-cred {
+  display: block;
+  margin-top: var(--sp-1);
+  padding-top: var(--sp-1);
+  border-top: 2px solid var(--sky);
+  width: fit-content;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sky-deep);
+}
+@media (max-width: 560px) {
+  .dr-header {
+    gap: var(--sp-2);
+  }
+  .dr-photo {
+    width: 124px;
+    height: 155px;
+    margin: 0 7px 7px 0;
+    box-shadow: 7px 7px 0 var(--sky-pale);
+  }
+  .dr-name {
+    padding-bottom: 7px;
+  }
 }
 .dr-bio {
   display: grid;
@@ -1729,13 +1861,15 @@ html.st-stack .photo-step-host {
 }
 .team-lead .assoc:nth-child(3) .dr-photo {
   grid-area: photo;
-  align-self: center;
+  align-self: start;
+  width: 240px;
+  height: 300px;
 }
 .team-lead .assoc:nth-child(3) h3 {
   grid-area: title;
   align-self: start;
   margin: 0;
-  padding-bottom: var(--sp-2);
+  padding-bottom: var(--sp-3);
   border-bottom: 1px solid var(--line);
 }
 .team-lead .assoc:nth-child(3) .dr-bio {
@@ -1751,9 +1885,13 @@ html.st-stack .photo-step-host {
       "sep sep"
       "bio bio";
   }
+  .team-lead .assoc:nth-child(3) .dr-photo {
+    width: 180px;
+    height: 225px;
+  }
   .team-lead .assoc:nth-child(3) h3 {
-    align-self: center;
-    padding-bottom: 0;
+    align-self: end;
+    padding-bottom: 10px;
     border-bottom: 0;
   }
   .team-lead .assoc:nth-child(3) .dr-divider {
@@ -1762,6 +1900,18 @@ html.st-stack .photo-step-host {
     height: 1px;
     background: var(--line);
     margin-top: var(--sp-2);
+  }
+}
+@media (max-width: 560px) {
+  .team-lead .assoc:nth-child(3) {
+    column-gap: var(--sp-2);
+  }
+  .team-lead .assoc:nth-child(3) .dr-photo {
+    width: 124px;
+    height: 155px;
+  }
+  .team-lead .assoc:nth-child(3) h3 {
+    padding-bottom: 7px;
   }
 }
 
@@ -1784,7 +1934,8 @@ html.st-stack .photo-step-host {
 }
 .avatar-block {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1798,11 +1949,90 @@ html.st-stack .photo-step-host {
   background: linear-gradient(135deg, var(--sky-deep), var(--navy-2));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
+.avatar-block img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
 .team-mini:nth-child(3n + 2) .avatar-block {
   background: linear-gradient(135deg, var(--sky), var(--sky-deep));
 }
 .team-mini:nth-child(3n + 3) .avatar-block {
   background: linear-gradient(135deg, var(--navy), var(--navy-3));
+}
+/* photo decoration: the staff photos share one backdrop and framing,
+   so each card cycles through one of three graphic treatments. A cycle
+   of 3 never lines up with the 5- or 2-column grid, so neighbours
+   always differ. Overlays sit inside the clipped block; offset blocks
+   are box-shadows that spill into the card padding. */
+.avatar-block {
+  position: relative;
+  margin-bottom: calc(var(--sp-2) + 8px);
+}
+.avatar-block::before,
+.avatar-block::after {
+  content: "";
+  position: absolute;
+  z-index: 1; /* above the photo, which scales on hover */
+  pointer-events: none;
+}
+.avatar-block img {
+  transition: transform 0.9s var(--ease);
+}
+.team-mini:hover .avatar-block img {
+  transform: scale(1.04);
+}
+/* 1: pale offset block bottom-right, sky bar along the base */
+.team-mini:nth-child(3n + 1) .avatar-block {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    8px 8px 0 var(--sky-pale);
+}
+.team-mini:nth-child(3n + 1) .avatar-block::after {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: var(--sky);
+}
+/* 2: sky corner brackets, top-left and bottom-right */
+.team-mini:nth-child(3n + 2) .avatar-block::before,
+.team-mini:nth-child(3n + 2) .avatar-block::after {
+  width: 28%;
+  height: 22%;
+  border: 0 solid var(--sky);
+}
+.team-mini:nth-child(3n + 2) .avatar-block::before {
+  top: 10px;
+  left: 10px;
+  border-top-width: 3px;
+  border-left-width: 3px;
+}
+.team-mini:nth-child(3n + 2) .avatar-block::after {
+  bottom: 10px;
+  right: 10px;
+  border-bottom-width: 3px;
+  border-right-width: 3px;
+}
+/* 3: offset block top-left, sky tab hanging from the top edge */
+.team-mini:nth-child(3n + 3) .avatar-block {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    -8px -8px 0 var(--mist-2);
+}
+.team-mini:nth-child(3n + 3) .avatar-block::after {
+  top: 0;
+  right: 14%;
+  width: 3px;
+  height: 18%;
+  background: var(--sky);
+}
+@media (prefers-reduced-motion: reduce) {
+  .team-mini:hover .avatar-block img {
+    transform: none;
+  }
 }
 .team-mini h5 {
   font-family: var(--serif);
