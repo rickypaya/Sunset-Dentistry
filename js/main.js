@@ -22,10 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const links = document.querySelector(".nav-links");
   toggle?.addEventListener("click", () => {
     links.classList.toggle("is-open");
-    toggle.setAttribute(
-      "aria-expanded",
-      links.classList.contains("is-open"),
-    );
+    toggle.setAttribute("aria-expanded", links.classList.contains("is-open"));
   });
 
   // ================= scroll engine =================
@@ -41,9 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
   const pinMq = window.matchMedia(PIN_QUERY);
   const header = document.getElementById("siteHeader");
-  const sideButtons = Array.from(
-    document.querySelectorAll(".side-nav button"),
-  );
+  const sideButtons = Array.from(document.querySelectorAll(".side-nav button"));
   const navButtons = sideButtons.filter((b) =>
     document.getElementById(b.dataset.target),
   );
@@ -151,8 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     history.pushState(null, "", url.hash);
     scrollToY(flowTop(target) - NAV_OFFSET);
-    if (!target.hasAttribute("tabindex"))
-      target.setAttribute("tabindex", "-1");
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });
   });
 
@@ -319,8 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ScrollTrigger.batch(revealEls, {
       start: "top 92%",
       once: true,
-      onEnter: (batch) =>
-        batch.forEach((el) => el.classList.add("is-visible")),
+      onEnter: (batch) => batch.forEach((el) => el.classList.add("is-visible")),
     });
 
     // Three motion configs. gsap.matchMedia reverts everything
@@ -390,11 +383,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // layout, so re-aim at the flow position.
       const target =
         location.hash &&
-        document.getElementById(
-          decodeURIComponent(location.hash.slice(1)),
-        );
-      if (target)
-        scrollToY(flowTop(target) - NAV_OFFSET, { immediate: true });
+        document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) scrollToY(flowTop(target) - NAV_OFFSET, { immediate: true });
     });
     let refreshTimer;
     document.querySelectorAll("img").forEach((img) => {
@@ -501,8 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const shades = [];
 
     layers.forEach((layer) => {
-      if (layer.dataset.pin !== "top" && layer.dataset.pin !== "bottom")
-        return;
+      if (layer.dataset.pin !== "top" && layer.dataset.pin !== "bottom") return;
       const pin = layer.querySelector(".layer-pin");
       const body = layer.querySelector(".layer-body");
       const h = () => pin.offsetHeight;
@@ -750,12 +739,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const wasOpen = item.classList.contains("is-open");
       const group = item.closest(".accordion-group");
       if (group) {
-        group
-          .querySelectorAll(".accordion-item.is-open")
-          .forEach((open) => {
-            open.classList.remove("is-open");
-            open.querySelector(".accordion-panel").style.maxHeight = null;
-          });
+        group.querySelectorAll(".accordion-item.is-open").forEach((open) => {
+          open.classList.remove("is-open");
+          open.querySelector(".accordion-panel").style.maxHeight = null;
+        });
       }
       if (!wasOpen) {
         item.classList.add("is-open");
@@ -796,8 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hasGsap) ScrollTrigger.refresh();
     const pin = layer.querySelector(".layer-pin");
     const layerTop = layer.getBoundingClientRect().top + window.scrollY;
-    const pinStart =
-      layerTop + Math.max(0, pin.offsetHeight - viewportH());
+    const pinStart = layerTop + Math.max(0, pin.offsetHeight - viewportH());
     if (window.scrollY > pinStart) scrollToY(pinStart, { immediate: true });
   }
 
@@ -822,18 +808,14 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     };
     show(0);
-    document
-      .querySelector(".quote-next")
-      ?.addEventListener("click", () => {
-        i = (i + 1) % slides.length;
-        show(i);
-      });
-    document
-      .querySelector(".quote-prev")
-      ?.addEventListener("click", () => {
-        i = (i - 1 + slides.length) % slides.length;
-        show(i);
-      });
+    document.querySelector(".quote-next")?.addEventListener("click", () => {
+      i = (i + 1) % slides.length;
+      show(i);
+    });
+    document.querySelector(".quote-prev")?.addEventListener("click", () => {
+      i = (i - 1 + slides.length) % slides.length;
+      show(i);
+    });
   }
 
   // Form submit intercept (schedule page - no backend wired up)
